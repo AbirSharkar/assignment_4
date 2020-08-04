@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pin Generator</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container" id="container" >
+        <div class="row">
+            <div class="col-md-6">
+                <div class="pin-generator half-width" >
+                    <input class="form-control" id="pinOutput" type="text" >
+                    <button class="generate-btn" id="generate-btn">Generate Pin</button>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="input-section half-width">
+                    <input class="form-control"  id="pinInput" type="text" value="">
+                    <div class="numbers">
+                        <div class="calc-body">
+                            <div class="calc-button-row">
+                              <div class="button" onclick="keypad('7')" >7</div>
+                              <div class="button" onclick="keypad('8')">8</div>
+                              <div class="button" onclick="keypad('9')">9</div>
+                            </div>
+                            <div class="calc-button-row">
+                              <div class="button" onclick="keypad('4')">4</div>
+                              <div class="button"onclick="keypad('5')">5</div>
+                              <div class="button"onclick="keypad('6')">6</div>
+                            </div>
+                            <div class="calc-button-row">
+                              <div class="button"onclick="keypad('1')">1</div>
+                              <div class="button"onclick="keypad('2')">2</div>
+                              <div class="button"onclick="keypad('3')">3</div>
+                            </div>
+                            <div class="calc-button-row">
+                                <div class="button" id="clear" onclick="backspace()" > < </div>
+                                <div class="button"onclick="keypad('0')">0</div>
+                                <div class="button" id="ac"onclick="whitespace()" >C</div>
+                              
+                            </div>
+                            <div>
+                                <button type="submit" id="submit-btn" class="submit-btn">Submit</button>
+                                <p class="action-left" id="warning" > <span id="action-left">3 </span> try left</p>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="notify-section">
+            <p class="notify" id="denied">❌ Pin Didn't Match, Please try again</p>
+            <p class="notify " id="granted">✅ Pin Matched... Secret door is opening for you</p>
+            
+        </div>
+    </div>
+
+
+    <script>
+        document.getElementById('generate-btn').addEventListener('click', function()
+        {
+            var result = Math.random() * 8999 + 1000 ;
+            var output = Math.round(result);
+            document.getElementById('pinOutput').value = output;   
+            displayNone();  
+        })
+
+        function displayNone (action) 
+        {
+            if(action == true){
+            document.getElementById("denied").style.display = "none";
+            }
+
+            if (action == false) {
+                 document.getElementById("granted").style.display = "none";
+            }
+            
+           else{
+                document.getElementById("denied").style.display = "none"; 
+                document.getElementById("granted").style.display = "none";
+            }
+        }    
+        
+
+        function displayBlock(action) 
+        {
+            if(action == true)
+            {
+                 document.getElementById("denied").style.display = "block";
+            }
+
+            if (action == false) 
+            {
+                 document.getElementById("granted").style.display = "block";
+            }  
+        }
+
+        function keypad (number)
+        {
+            pinInput.value += number
+        }
+
+        function backspace() 
+        { 
+            var inputValue = document.getElementById("pinInput").value;
+            document.getElementById("pinInput").value = inputValue.substr(0, inputValue.length - 1);
+        }
+
+        function whitespace() 
+        {
+            var inputValue = document.getElementById("pinInput").value;
+            document.getElementById("pinInput").value = inputValue.substr(0, inputValue.length * 0);
+        }
+        
+        document.getElementById('submit-btn').addEventListener('click', function()
+        {
+            var inputValue = document.getElementById("pinInput").value; 
+            var outputValue = document.getElementById("pinOutput").value;
+               
+                        if( inputValue == outputValue )
+                        {
+                            displayNone(true);
+                            displayBlock(false);
+                        }
+                        if( inputValue !== outputValue )
+                        {
+                            displayBlock(true);
+                            displayNone(false);
+                                //  code for remaining attempts
+                           var remainingTries = document.getElementById("action-left").innerHTML;
+                            if(remainingTries > 0)
+                            {
+                                document.getElementById("action-left").innerHTML = remainingTries-1;
+                            }
+                            if( remainingTries == 1)
+                            {
+                                document.getElementById("warning").innerHTML = 'you are out of your tries';
+                                document.getElementById('submit-btn').disabled = true;
+                                document.getElementById('submit-btn').innerHTML = 'Disabled'
+                            }
+                        }   
+                                // warning for empty input (extra content)
+                              
+                            if(inputValue.length == 0 && outputValue.length !== 0)
+                            { 
+                                alert(" input value is empty");
+                            displayNone(true);
+                                var remainingTries = document.getElementById("action-left").innerHTML;
+                                document.getElementById("pinInput").innerHTML = remainingTries*1 + 1;
+                            }    
+                            if( outputValue.length  == 0 && inputValue.length  !== 0)
+                            {
+                                alert("please generate pin first");
+                                displayNone(true);
+                                var remainingTries = document.getElementById("action-left").innerHTML;
+                                document.getElementById("action-left").innerHTML = remainingTries*1 + 1;
+                            }   
+                            if(inputValue.length  == 0 && outputValue.length  == 0)
+                            {
+                                alert("Both values are empty");
+                                displayNone(false);
+                            }                         
+        })             
+    </script>
+</body>
+</html>     
